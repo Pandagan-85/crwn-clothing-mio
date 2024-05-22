@@ -3,7 +3,8 @@ import { initializeApp } from "firebase/app";
 
 import {
   getAuth,
-  signInWithRedirect,
+  createUserWithEmailAndPassword,
+  // signInWithRedirect,
   signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
@@ -25,21 +26,31 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 
-const provider = new GoogleAuthProvider();
+const googleProvider = new GoogleAuthProvider();
 
-provider.setCustomParameters({
+googleProvider.setCustomParameters({
   prompt: "select_account",
 });
 
 export const auth = getAuth();
-export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
+
+//per il login in popup
+export const signInWithGooglePopup = () =>
+  signInWithPopup(auth, googleProvider);
+//per il login con redirect
+// export const signInWithGoogleRedirect = () =>
+//   signInWithRedirect(auth, googleProvider);
 
 //creiamo il DB istanziando firestore
 export const db = getFirestore();
 
 //creaiamo un metodo per creare un utente nel db dall'autorizzazione che riceve il codice di autorizzazione
 
-export const createUserDocumentFromAuth = async userAuth => {
+export const createUserDocumentFromAuth = async (
+  userAuth,
+  additionalInformation = {}
+) => {
+  if (!userAuth) return;
   //dobbiamo capire per prima cosa se esiste una referenza del documento
 
   const userDocRef = doc(db, "user", userAuth.uid);
@@ -61,6 +72,8 @@ export const createUserDocumentFromAuth = async userAuth => {
         displayName,
         email,
         createdAt,
+
+        ...additionalInformation,
       });
     } catch (error) {
       console.log("error creating the user", error.message);
@@ -71,4 +84,10 @@ export const createUserDocumentFromAuth = async userAuth => {
   //return userDocRef
 
   return userDocRef;
+};
+
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+
+  return await createUserWithEmailAndPassword(auth, email, password);
 };
