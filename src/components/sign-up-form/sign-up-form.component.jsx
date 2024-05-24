@@ -15,7 +15,6 @@ const SignUpForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
 
   const { displayName, email, password, confirmPassword } = formFields;
-  //console.log(formFields);
 
   const resetFormFields = () => {
     setFormFields(defaultFormFields);
@@ -23,7 +22,7 @@ const SignUpForm = () => {
   const handleSubmit = async event => {
     event.preventDefault();
 
-    if (password != confirmPassword) {
+    if (password !== confirmPassword) {
       alert("le psw non coincidono");
       return;
     }
@@ -38,8 +37,9 @@ const SignUpForm = () => {
       );
 
       await createUserDocumentFromAuth(user, { displayName });
+      //Aggiungiamo questo spread, perchè il display non viene passato dall'autenticazione, ma dal nostro form di sign up, e lo aggiungiamo al db.
       resetFormFields();
-      console.log(user);
+      //console.log(user);
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         alert("Errore email già usata");

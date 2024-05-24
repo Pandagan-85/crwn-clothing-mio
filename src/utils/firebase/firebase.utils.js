@@ -8,6 +8,8 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
 } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -55,11 +57,12 @@ export const createUserDocumentFromAuth = async (
   //dobbiamo capire per prima cosa se esiste una referenza del documento
 
   const userDocRef = doc(db, "user", userAuth.uid);
-  console.log(userDocRef);
+  //console.log(userDocRef);
 
   const userSnapshop = await getDoc(userDocRef);
-  console.log(userSnapshop);
-  console.log(userSnapshop.exists());
+  // console.log(userSnapshop);
+  // console.log(userSnapshop.exists());
+
   //if user data does not exist
   //Create / set the document with the data from userAuth in my collection
 
@@ -73,7 +76,7 @@ export const createUserDocumentFromAuth = async (
         displayName,
         email,
         createdAt,
-
+        //Aggiungiamo questo spread, perchè il display non viene passato dall'autenticazione, ma dal nostro form di sign up, e lo aggiungiamo al db. In quando non fa parte dell'oggetto user
         ...additionalInformation,
       });
     } catch (error) {
@@ -82,7 +85,6 @@ export const createUserDocumentFromAuth = async (
   }
 
   //if user data exists
-  //return userDocRef
 
   return userDocRef;
 };
@@ -97,3 +99,8 @@ export const signInAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return;
   return await signInWithEmailAndPassword(auth, email, password);
 };
+
+export const signOutUser = async () => await signOut(auth);
+
+export const onAuthStateChangedListener = callback =>
+  onAuthStateChanged(auth, callback);
