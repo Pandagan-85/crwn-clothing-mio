@@ -14,7 +14,16 @@ import {
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  writeBatch,
+  query,
+  getDocs,
+} from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -47,6 +56,37 @@ export const signInWithGooglePopup = () =>
 //creiamo il DB istanziando firestore
 export const db = getFirestore();
 
+//Creiamo funzione per creare collezioni da lanciare una sola volta nel product context
+
+export const addCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  const collectionRef = collection(db, collectionKey);
+  //transazione aggiungere tutti i dati
+  const batch = writeBatch(db);
+
+  objectsToAdd.forEach(object => {
+    const docRef = doc(collectionRef, object.title.toLowerCase());
+    batch.set(docRef, object);
+  });
+
+  await batch.commit();
+  console.log("done");
+};
+
+export const getCategoriesAndDocuments = async () => {
+  const colletctionRef = collection(db, "categories");
+  const q = query(colletctionRef);
+
+  const querySnapshot = await getDocs(q);
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
+    const { title, items } = docSnapshot.data();
+    acc[title.toLowerCase()] = items;
+    return acc;
+  }, {});
+  return categoryMap;
+};
 //creaiamo un metodo per creare un utente nel db dall'autorizzazione che riceve il codice di autorizzazione
 
 export const createUserDocumentFromAuth = async (
