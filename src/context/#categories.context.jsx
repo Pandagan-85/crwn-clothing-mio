@@ -10,11 +10,6 @@ export const CategoriesContext = createContext({
 export const CategoriesProvider = ({ children }) => {
   const [categoriesMap, setCategoriesMap] = useState({});
 
-  //useEffect da lanciare per l'import dei prodotti del file json su firestore
-  // useEffect(() => {
-  //   addCollectionAndDocuments("categories", SHOP_DATA);
-  // }, []);
-
   useEffect(() => {
     const getCategoriesMap = async () => {
       const categoryMap = await getCategoriesAndDocuments();

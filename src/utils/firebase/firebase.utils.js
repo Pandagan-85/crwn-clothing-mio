@@ -80,12 +80,7 @@ export const getCategoriesAndDocuments = async () => {
   const q = query(colletctionRef);
 
   const querySnapshot = await getDocs(q);
-  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
-    const { title, items } = docSnapshot.data();
-    acc[title.toLowerCase()] = items;
-    return acc;
-  }, {});
-  return categoryMap;
+  return querySnapshot.docs.map(docSnapshot => docSnapshot.data());
 };
 //creaiamo un metodo per creare un utente nel db dall'autorizzazione che riceve il codice di autorizzazione
 
