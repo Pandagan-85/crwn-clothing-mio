@@ -9,7 +9,7 @@ import ProductCard from "../../components/product-card/product-card.component";
 const Category = () => {
   const { category } = useParams();
   // const { categoriesMap } = useContext(CategoriesContext);
-  console.log("render/re-rendering category component");
+  // console.log("render/re-rendering category component");
   const categoriesMap = useSelector(selectCategoriesMap);
 
   //non possiamo usarlo così perchè tentiamo di renderizzare primad i aver preso il contenuto
