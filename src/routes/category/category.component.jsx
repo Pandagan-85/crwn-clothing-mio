@@ -3,7 +3,11 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import { useSelector } from "react-redux";
-import { selectCategoriesMap } from "../../store/categories/category.selector";
+import {
+  selectCategoriesIsLoading,
+  selectCategoriesMap,
+} from "../../store/categories/category.selector";
+import Spinner from "../../components/spinner/spinner.component";
 import ProductCard from "../../components/product-card/product-card.component";
 
 const Category = () => {
@@ -11,6 +15,8 @@ const Category = () => {
   // const { categoriesMap } = useContext(CategoriesContext);
   // console.log("render/re-rendering category component");
   const categoriesMap = useSelector(selectCategoriesMap);
+
+  const isLoading = useSelector(selectCategoriesIsLoading);
 
   //non possiamo usarlo così perchè tentiamo di renderizzare primad i aver preso il contenuto
   //const [products, setProducts] = useState([]);
@@ -24,13 +30,17 @@ const Category = () => {
   return (
     <>
       <CategoryTitle>{category.toUpperCase()}</CategoryTitle>
-      <CategoryContainer>
-        {/* In questo modo renderizziamo il componente solo dopo avere preso i dati */}
-        {products &&
-          products.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-      </CategoryContainer>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <CategoryContainer>
+          {/* In questo modo renderizziamo il componente solo dopo avere preso i dati */}
+          {products &&
+            products.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+        </CategoryContainer>
+      )}
     </>
   );
 };
