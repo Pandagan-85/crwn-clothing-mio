@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { createAuthUserWithEmailAndPassword } from "../../utils/firebase/firebase.utils";
 import { createUserDocumentFromAuth } from "../../utils/firebase/firebase.utils";
 import FormInput from "../form-input/form-input.component";
 
 import Button from "../button/button.component";
 import { SignUpContainer } from "./sign-up-form.styles.jsx";
+import { signUpStart } from "../../store/user/user.action.js";
 const defaultFormFields = {
   displayName: "",
   email: "",
@@ -15,6 +17,8 @@ const SignUpForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
 
   const { displayName, email, password, confirmPassword } = formFields;
+
+  const dispatch = useDispatch();
 
   const resetFormFields = () => {
     setFormFields(defaultFormFields);
@@ -31,13 +35,7 @@ const SignUpForm = () => {
     // const { user } = await createAuthUserWithEmailAndPassword(email, password);
     // const userDocRef = await createUserDocumentFromAuth(user);
     try {
-      const { user } = await createAuthUserWithEmailAndPassword(
-        email,
-        password
-      );
-
-      await createUserDocumentFromAuth(user, { displayName });
-      //Aggiungiamo questo spread, perchè il display non viene passato dall'autenticazione, ma dal nostro form di sign up, e lo aggiungiamo al db.
+      dispatch(signUpStart(email, password, displayName));
       resetFormFields();
       //console.log(user);
     } catch (error) {
